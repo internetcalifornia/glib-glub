@@ -27,6 +27,8 @@ export interface SessionStore {
   listToolCalls(sessionId: TutorSessionId): AsyncResult<ToolCall[], 'DB_ERROR'>;
   /** The most recent ended session's summary for this learner on this track. */
   lastSummary(learnerId: UserId, trackId: TrackId): AsyncResult<SessionSummary | null, 'DB_ERROR'>;
+  /** The learner's sessions, newest first. */
+  listSessions(learnerId: UserId, limit: number): AsyncResult<TutorSession[], 'DB_ERROR'>;
 }
 
 export interface Learners {

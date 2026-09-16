@@ -6,6 +6,7 @@
  */
 
 import { brandId, newId, type LessonId, type TrackId } from '@glib-glub/core';
+import { ensureSubject, kyselyCurriculumStore } from '@glib-glub/curriculum';
 import type { DB } from '@glib-glub/db';
 import { IDENTITY_TABLES, kyselyIdentityStore } from '@glib-glub/identity';
 import { connectTestDb, describeLive } from '@glib-glub/testing';
@@ -28,26 +29,63 @@ describeLive('SessionStore on Postgres', () => {
     await close();
   });
 
-  /** The seeded Grade 6 track and its first lesson (Decision #7 makes them present). */
+  /**
+   * The seeded Grade 6 track and its first lesson (Decision #7 makes them
+   * present) — or, when another suite cleared the catalogue, a small track
+   * created here through the curriculum store.
+   */
   const seededLesson = async () => {
-    const track = await db
-      .selectFrom('tracks')
-      .select(['id'])
-      .where('title', '=', 'Grade 6 Mathematics')
-      .executeTakeFirstOrThrow();
-    const lesson = await db
+    const seeded = await db
       .selectFrom('lessons')
       .innerJoin('units', 'units.id', 'lessons.unit_id')
-      .select(['lessons.id', 'lessons.title'])
-      .where('units.track_id', '=', track.id)
+      .innerJoin('tracks', 'tracks.id', 'units.track_id')
+      .select(['tracks.id as trackId', 'lessons.id as lessonId', 'lessons.title'])
+      .where('tracks.title', '=', 'Grade 6 Mathematics')
       .orderBy('units.position')
       .orderBy('lessons.position')
-      .executeTakeFirstOrThrow();
-    return {
-      trackId: brandId<'track'>(track.id),
-      lessonId: brandId<'lesson'>(lesson.id),
-      lessonTitle: lesson.title,
-    };
+      .executeTakeFirst();
+    if (seeded) {
+      return {
+        trackId: brandId<'track'>(seeded.trackId),
+        lessonId: brandId<'lesson'>(seeded.lessonId),
+        lessonTitle: seeded.title,
+      };
+    }
+    const curriculum = kyselyCurriculumStore(db);
+    const subject = await ensureSubject(curriculum, 'Mathematics', 'Grade 6 Mathematics');
+    expect(subject.ok).toBe(true);
+    const trackId = newId<'track'>();
+    const unitId = newId<'unit'>();
+    const lessonId = newId<'lesson'>();
+    void (await curriculum.createTrack({
+      id: trackId,
+      subjectId: subject.ok ? subject.val.id : newId<'subject'>(),
+      title: 'Grade 6 Mathematics',
+      summary: 'Created by the tutor store test.',
+      levelMin: '6-8',
+      levelMax: '6-8',
+      language: 'en',
+      visibility: 'published',
+      authoredBy: null,
+      origin: 'seed',
+      pedagogy: 'Ask first.',
+    }));
+    void (await curriculum.addUnit({
+      id: unitId,
+      trackId,
+      position: 1,
+      title: 'Ratios and rates',
+    }));
+    void (await curriculum.addLesson({
+      id: lessonId,
+      unitId,
+      position: 1,
+      title: 'What a ratio says',
+      objectives: ['Describe a ratio'],
+      content: 'Start from marbles.',
+      estimatedMinutes: 15,
+    }));
+    return { trackId, lessonId, lessonTitle: 'What a ratio says' };
   };
 
   const summary: SessionSummary = {

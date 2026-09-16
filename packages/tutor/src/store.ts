@@ -257,6 +257,28 @@ export function kyselySessionStore(db: Kysely<DB>): SessionStore {
       }
       return ok(calls);
     },
+    listSessions: async (learnerId, limit): ReturnType<SessionStore['listSessions']> => {
+      const rows = await wrapAsync(
+        () =>
+          db
+            .selectFrom('tutor_sessions')
+            .selectAll()
+            .where('learner_id', '=', learnerId)
+            .orderBy('started_at', 'desc')
+            .limit(limit)
+            .execute(),
+        'DB_ERROR'
+      );
+      if (!rows.ok) return rows;
+      const sessions: TutorSession[] = [];
+      for (const row of rows.val) {
+        const session = toSession(row);
+        if (!session)
+          return err('DB_ERROR', { message: `Session ${row.id} has an unreadable document` });
+        sessions.push(session);
+      }
+      return ok(sessions);
+    },
     lastSummary: async (learnerId, trackId): ReturnType<SessionStore['lastSummary']> => {
       const row = await wrapAsync(
         () =>

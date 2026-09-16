@@ -54,6 +54,13 @@ export function memorySessionStore(): SessionStore {
     },
     listToolCalls: async (sessionId): ReturnType<SessionStore['listToolCalls']> =>
       ok(calls.filter((c) => c.sessionId === sessionId)),
+    listSessions: async (learnerId, limit): ReturnType<SessionStore['listSessions']> =>
+      ok(
+        [...sessions.values()]
+          .filter((s) => s.learnerId === learnerId)
+          .sort((a, b) => b.startedAt.getTime() - a.startedAt.getTime())
+          .slice(0, limit)
+      ),
     lastSummary: async (learnerId, trackId): ReturnType<SessionStore['lastSummary']> =>
       ok(
         [...sessions.values()]

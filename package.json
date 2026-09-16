@@ -13,7 +13,7 @@
     "lint": "eslint .",
     "typecheck": "pnpm -r typecheck",
     "test": "pnpm -r --if-present test",
-    "test:integration": "pnpm -r --if-present test:integration",
+    "test:integration": "pnpm -r --workspace-concurrency=1 --if-present test:integration",
     "db:migrate": "pnpm --filter @glib-glub/db migrate",
     "prepare": "husky"
   },

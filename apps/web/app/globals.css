@@ -1,0 +1,47 @@
+@import 'tailwindcss';
+
+/*
+ * Mobile first: one column, generous tap targets, the system font stack, and
+ * colour tokens that follow the device's light/dark preference. Utilities
+ * reference the tokens through the @theme block below.
+ */
+@theme {
+  --color-ink: #17212b;
+  --color-paper: #fbfaf7;
+  --color-accent: #1f6feb;
+  --color-accent-soft: #dbe8ff;
+  --color-good: #1a7f4b;
+  --color-warn: #b45309;
+  --color-line: #e3e1da;
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-ink: #f3f4f6;
+    --color-paper: #101418;
+    --color-accent: #6ea8ff;
+    --color-accent-soft: #1c2b44;
+    --color-line: #2a313a;
+  }
+}
+
+html {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100dvh;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+input,
+select,
+textarea,
+button {
+  font: inherit;
+}
