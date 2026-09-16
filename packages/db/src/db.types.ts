@@ -10,6 +10,18 @@ export type Generated<T> =
     ? ColumnType<S, I | undefined, U>
     : ColumnType<T, T | undefined, T>;
 
+export type Json = JsonValue;
+
+export type JsonArray = JsonValue[];
+
+export type JsonObject = {
+  [x: string]: JsonValue | undefined;
+};
+
+export type JsonPrimitive = boolean | number | string | null;
+
+export type JsonValue = JsonArray | JsonObject | JsonPrimitive;
+
 export type Timestamp = ColumnType<Date, Date | string, Date | string>;
 
 export interface Account {
@@ -36,10 +48,31 @@ export interface Guardianships {
   status: string;
 }
 
+export interface LearnerProfiles {
+  about: Generated<string>;
+  grade_label: string | null;
+  interests: Generated<string[]>;
+  learning_styles: Generated<string[]>;
+  preferred_language: Generated<string>;
+  updated_at: Generated<Timestamp>;
+  user_id: string;
+}
+
 export interface LearnerSettings {
   age_band: string | null;
   updated_at: Generated<Timestamp>;
   user_id: string;
+}
+
+export interface LearningObjectives {
+  created_at: Generated<Timestamp>;
+  description: string | null;
+  id: string;
+  learner_id: string;
+  set_by: string;
+  status: Generated<string>;
+  title: string;
+  updated_at: Generated<Timestamp>;
 }
 
 export interface Passkey {
@@ -56,6 +89,14 @@ export interface Passkey {
   userId: string;
 }
 
+export interface PersonalisationSnapshots {
+  built_at: Generated<Timestamp>;
+  content: Json;
+  digest: string;
+  learner_id: string;
+  version: number;
+}
+
 export interface Session {
   createdAt: Generated<Timestamp>;
   expiresAt: Timestamp;
@@ -65,6 +106,26 @@ export interface Session {
   updatedAt: Generated<Timestamp>;
   userAgent: string | null;
   userId: string;
+}
+
+export interface UploadExtractions {
+  extracted_at: Generated<Timestamp>;
+  summary: string;
+  tags: Generated<string[]>;
+  text: string;
+  upload_id: string;
+}
+
+export interface Uploads {
+  blob_key: string;
+  byte_size: number;
+  created_at: Generated<Timestamp>;
+  file_name: string;
+  id: string;
+  learner_id: string;
+  mime_type: string;
+  rejection_reason: string | null;
+  status: Generated<string>;
 }
 
 export interface User {
@@ -95,9 +156,14 @@ export interface Verification {
 export interface DB {
   account: Account;
   guardianships: Guardianships;
+  learner_profiles: LearnerProfiles;
   learner_settings: LearnerSettings;
+  learning_objectives: LearningObjectives;
   passkey: Passkey;
+  personalisation_snapshots: PersonalisationSnapshots;
   session: Session;
+  upload_extractions: UploadExtractions;
+  uploads: Uploads;
   user: User;
   user_roles: UserRoles;
   verification: Verification;

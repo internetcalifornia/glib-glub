@@ -26,6 +26,14 @@ export type { RoleDeps } from './roles';
 export { getSessionUser } from './session';
 export type { SessionDeps } from './session';
 export { IDENTITY_TABLES, kyselyIdentityStore } from './store';
+export {
+  fakeAssertion,
+  fakeAttestation,
+  identityWorld,
+  memoryIdentity,
+  strangerId,
+} from './testing';
+export type { IdentityWorld, MemoryIdentity } from './testing';
 export { AGE_BANDS, PROVIDERS, ROLES } from './types';
 export type {
   AgeBand,
