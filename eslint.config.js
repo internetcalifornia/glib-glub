@@ -47,6 +47,8 @@ const FRAMEWORK_OWNED = [
   'apps/web/proxy.ts',
   'packages/mcp-tools/src/**/*.ts',
   'packages/db/scripts/**/*.ts',
+  // Kysely runs a migration's up/down as Promise<void>; the runner wraps them.
+  'packages/db/src/migrations/[0-9][0-9][0-9]-*.ts',
 ];
 
 export default [

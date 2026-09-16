@@ -23,7 +23,10 @@ import { getDatabase } from '../client';
  * Every migration this build expects, in order. Add a migration, add it
  * here; the test guards the pairing.
  */
-export const EXPECTED_MIGRATIONS: ReadonlyArray<string> = [];
+export const EXPECTED_MIGRATIONS: ReadonlyArray<string> = [
+  '001-identity',
+  '002-roles-guardianships',
+];
 
 export type MigrationStatusErrorTag = 'MIGRATION_STATUS_ERROR';
 

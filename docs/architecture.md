@@ -20,6 +20,10 @@ _Kept current. Update in the same change as the code._
 | `logging` | `LoggerPort` (the structural slice packages depend on), bored-logs construction, memory/noop loggers. |
 | `testing` | `describeLive`, the shared Postgres test handle, `featurePath`.                                       |
 
+## How a request is authenticated
+
+Better Auth (Decision #3) owns `user`, `session`, `account`, `verification` and `passkey`. `packages/identity` never trusts the cookie for anything but the session token: `getSessionUser` reads roles and age band from `user_roles` and `learner_settings` on every request. The linking policy (`linking.ts`) enforces the last-login guard, age-band gating and guardian-on-behalf linking; Better Auth applies the same `TRUSTED_PROVIDERS` list to implicit linking in its OAuth callback.
+
 ## How a check runs
 
 `pnpm lint` → ESLint 10 with typescript-eslint (classic TS 6 API) and the

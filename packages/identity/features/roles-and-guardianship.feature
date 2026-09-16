@@ -21,11 +21,16 @@ Feature: Roles and guardianship
     When "sam@example.com" grants "kim@example.com" the role "educator"
     Then granting fails with FORBIDDEN
 
-  Scenario: A guardian invites a learner and the learner accepts
+  Scenario: A guardian invites a learner
     Given "parent@example.com" signed up with the password "correct horse battery"
     And "kid@example.com" signed up with the password "correct horse battery"
     When "parent@example.com" invites "kid@example.com" as their learner
     Then the guardianship between "parent@example.com" and "kid@example.com" is "invited"
+
+  Scenario: The learner accepts and the guardian becomes one
+    Given "parent@example.com" signed up with the password "correct horse battery"
+    And "kid@example.com" signed up with the password "correct horse battery"
+    And "parent@example.com" invited "kid@example.com" as their learner
     When "kid@example.com" accepts the guardianship from "parent@example.com"
     Then the guardianship between "parent@example.com" and "kid@example.com" is "accepted"
     And "parent@example.com" has the role "guardian"
