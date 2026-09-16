@@ -22,6 +22,8 @@ export type JsonPrimitive = boolean | number | string | null;
 
 export type JsonValue = JsonArray | JsonObject | JsonPrimitive;
 
+export type Numeric = ColumnType<string, number | string, number | string>;
+
 export type Timestamp = ColumnType<Date, Date | string, Date | string>;
 
 export interface Account {
@@ -40,10 +42,55 @@ export interface Account {
   userId: string;
 }
 
+export interface AssessmentQuestions {
+  assessment_id: string;
+  position: number;
+  question_id: string;
+}
+
+export interface Assessments {
+  created_at: Generated<Timestamp>;
+  created_by: string | null;
+  id: string;
+  lesson_id: string | null;
+  purpose: string;
+  status: Generated<string>;
+  subject_id: string | null;
+  title: string;
+  track_id: string | null;
+}
+
+export interface Attempts {
+  assessment_id: string;
+  id: string;
+  learner_id: string;
+  submitted_at: Timestamp;
+}
+
+export interface Cards {
+  back: string;
+  deck_id: string;
+  due_at: Generated<Timestamp>;
+  easiness: Generated<Numeric>;
+  front: string;
+  id: string;
+  interval_days: Generated<number>;
+  last_reviewed_at: Timestamp | null;
+  repetitions: Generated<number>;
+}
+
 export interface Categories {
   id: string;
   name: string;
   slug: string;
+}
+
+export interface Decks {
+  created_at: Generated<Timestamp>;
+  id: string;
+  learner_id: string;
+  lesson_id: string | null;
+  title: string;
 }
 
 export interface Enrollments {
@@ -52,6 +99,17 @@ export interface Enrollments {
   learner_id: string;
   status: Generated<string>;
   track_id: string;
+}
+
+export interface Gradings {
+  feedback: Generated<string>;
+  graded_at: Timestamp;
+  graded_by: string | null;
+  grader: string;
+  id: string;
+  override_of: string | null;
+  response_id: string;
+  score: Numeric;
 }
 
 export interface Guardianships {
@@ -105,6 +163,15 @@ export interface Lessons {
   unit_id: string;
 }
 
+export interface LevelEstimates {
+  attempt_id: string;
+  estimated_at: Timestamp;
+  learner_id: string;
+  level: string;
+  score: Numeric;
+  subject_id: string;
+}
+
 export interface PacingPlans {
   cadence: string;
   enrollment_id: string;
@@ -132,6 +199,22 @@ export interface PersonalisationSnapshots {
   digest: string;
   learner_id: string;
   version: number;
+}
+
+export interface Questions {
+  body: Json;
+  created_at: Generated<Timestamp>;
+  id: string;
+  kind: string;
+  points: Generated<number>;
+  prompt: string;
+}
+
+export interface Responses {
+  answer: Json | null;
+  attempt_id: string;
+  id: string;
+  question_id: string;
 }
 
 export interface Session {
@@ -222,17 +305,26 @@ export interface Verification {
 
 export interface DB {
   account: Account;
+  assessment_questions: AssessmentQuestions;
+  assessments: Assessments;
+  attempts: Attempts;
+  cards: Cards;
   categories: Categories;
+  decks: Decks;
   enrollments: Enrollments;
+  gradings: Gradings;
   guardianships: Guardianships;
   learner_profiles: LearnerProfiles;
   learner_settings: LearnerSettings;
   learning_objectives: LearningObjectives;
   lesson_progress: LessonProgress;
   lessons: Lessons;
+  level_estimates: LevelEstimates;
   pacing_plans: PacingPlans;
   passkey: Passkey;
   personalisation_snapshots: PersonalisationSnapshots;
+  questions: Questions;
+  responses: Responses;
   session: Session;
   subjects: Subjects;
   tracks: Tracks;
