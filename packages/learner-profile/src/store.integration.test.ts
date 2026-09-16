@@ -15,13 +15,13 @@ import { kyselyProfileStore, PROFILE_TABLES } from './store';
 describeLive('ProfileStore on Postgres', () => {
   const handle = connectTestDb<DB>();
   if (!handle.ok) return;
-  const { db, truncate, close } = handle.val;
+  const { db, clear, close } = handle.val;
   const store = kyselyProfileStore(db);
   const identity = kyselyIdentityStore(db);
   let learnerId: UserId;
 
   beforeEach(async () => {
-    void (await truncate([...PROFILE_TABLES, ...IDENTITY_TABLES]));
+    void (await clear([...PROFILE_TABLES, ...IDENTITY_TABLES]));
     const user = await identity.createUser({
       email: 'maya@example.com',
       name: 'Maya',

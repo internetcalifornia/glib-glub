@@ -20,7 +20,7 @@ import { IDENTITY_TABLES, kyselyIdentityStore } from './store';
 describeLive('Better Auth on Postgres', () => {
   const handle = connectTestDb<DB>();
   if (!handle.ok) return;
-  const { db, truncate, close } = handle.val;
+  const { db, clear, close } = handle.val;
 
   const store: IdentityStore = kyselyIdentityStore(db);
   const auth = createAuth({
@@ -32,7 +32,7 @@ describeLive('Better Auth on Postgres', () => {
   const authenticator: Authenticator = betterAuthAuthenticator(auth);
 
   beforeEach(async () => {
-    const cleared = await truncate(IDENTITY_TABLES);
+    const cleared = await clear(IDENTITY_TABLES);
     expect(cleared.ok).toBe(true);
   });
 

@@ -40,6 +40,20 @@ export interface Account {
   userId: string;
 }
 
+export interface Categories {
+  id: string;
+  name: string;
+  slug: string;
+}
+
+export interface Enrollments {
+  enrolled_at: Generated<Timestamp>;
+  id: string;
+  learner_id: string;
+  status: Generated<string>;
+  track_id: string;
+}
+
 export interface Guardianships {
   accepted_at: Timestamp | null;
   guardian_id: string;
@@ -75,6 +89,29 @@ export interface LearningObjectives {
   updated_at: Generated<Timestamp>;
 }
 
+export interface LessonProgress {
+  completed_at: Generated<Timestamp>;
+  enrollment_id: string;
+  lesson_id: string;
+}
+
+export interface Lessons {
+  content: Generated<string>;
+  estimated_minutes: Generated<number>;
+  id: string;
+  objectives: Generated<string[]>;
+  position: number;
+  title: string;
+  unit_id: string;
+}
+
+export interface PacingPlans {
+  cadence: string;
+  enrollment_id: string;
+  sessions_per_period: number;
+  started_at: Timestamp;
+}
+
 export interface Passkey {
   aaguid: string | null;
   backedUp: boolean;
@@ -106,6 +143,36 @@ export interface Session {
   updatedAt: Generated<Timestamp>;
   userAgent: string | null;
   userId: string;
+}
+
+export interface Subjects {
+  category_id: string;
+  id: string;
+  name: string;
+  slug: string;
+}
+
+export interface Tracks {
+  authored_by: string | null;
+  created_at: Generated<Timestamp>;
+  id: string;
+  language: Generated<string>;
+  level_max: string;
+  level_min: string;
+  origin: string;
+  pedagogy: Generated<string>;
+  subject_id: string;
+  summary: Generated<string>;
+  title: string;
+  updated_at: Generated<Timestamp>;
+  visibility: Generated<string>;
+}
+
+export interface Units {
+  id: string;
+  position: number;
+  title: string;
+  track_id: string;
 }
 
 export interface UploadExtractions {
@@ -155,13 +222,21 @@ export interface Verification {
 
 export interface DB {
   account: Account;
+  categories: Categories;
+  enrollments: Enrollments;
   guardianships: Guardianships;
   learner_profiles: LearnerProfiles;
   learner_settings: LearnerSettings;
   learning_objectives: LearningObjectives;
+  lesson_progress: LessonProgress;
+  lessons: Lessons;
+  pacing_plans: PacingPlans;
   passkey: Passkey;
   personalisation_snapshots: PersonalisationSnapshots;
   session: Session;
+  subjects: Subjects;
+  tracks: Tracks;
+  units: Units;
   upload_extractions: UploadExtractions;
   uploads: Uploads;
   user: User;

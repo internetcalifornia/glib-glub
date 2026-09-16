@@ -49,6 +49,8 @@ const FRAMEWORK_OWNED = [
   'packages/db/scripts/**/*.ts',
   // Kysely runs a migration's up/down as Promise<void>; the runner wraps them.
   'packages/db/src/migrations/[0-9][0-9][0-9]-*.ts',
+  // The seed helper is called only from those migrations and shares their signature.
+  'packages/db/src/migrations/seed.ts',
 ];
 
 export default [

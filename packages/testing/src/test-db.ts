@@ -2,11 +2,17 @@
  * The Postgres handle integration tests share.
  *
  * One database, migrated ahead of the run (CI runs `pnpm db:migrate`; a
- * developer does the same once). Tests isolate themselves by truncating the
+ * developer does the same once). Tests isolate themselves by clearing the
  * tables they touch in `beforeEach`, which is why the integration tier runs
  * files serially (vitest.shared.config.ts). Per-test schemas were considered
  * and rejected: they need the migrations re-run per file, and the migrations
  * are the slow part.
+ *
+ * `clear` deletes rather than truncates. `TRUNCATE … CASCADE` follows every
+ * foreign key OUT of the named tables — clearing `user` truncated `tracks`
+ * through `authored_by` and wiped the seeded catalogue (Decision #7) for the
+ * whole run. Ordered deletes touch exactly the tables named; callers list
+ * children before parents.
  *
  * Generic over the schema type so this package does not depend on
  * @glib-glub/db (which depends on this package for its own tests).
@@ -23,8 +29,8 @@ export type TestDbErrorTag = 'NO_TEST_DATABASE' | 'TEST_DB_ERROR';
 
 export interface TestDb<Schema> {
   db: Kysely<Schema>;
-  /** Empty the given tables (and whatever references them) between tests. */
-  truncate(tables: ReadonlyArray<string>): AsyncResult<void, 'TEST_DB_ERROR'>;
+  /** Empty the given tables, in the order given (children first). */
+  clear(tables: ReadonlyArray<string>): AsyncResult<void, 'TEST_DB_ERROR'>;
   close(): Promise<void>;
 }
 
@@ -38,11 +44,11 @@ export function connectTestDb<Schema>(): Result<TestDb<Schema>, TestDbErrorTag> 
   const db = new Kysely<Schema>({ dialect: new PostgresDialect({ pool }) });
   return ok({
     db,
-    truncate: (tables) =>
+    clear: (tables) =>
       wrapAsync(async () => {
-        if (tables.length === 0) return;
-        const list = tables.map((table) => `"${table}"`).join(', ');
-        await sql.raw(`TRUNCATE TABLE ${list} RESTART IDENTITY CASCADE`).execute(db);
+        for (const table of tables) {
+          await sql.raw(`DELETE FROM "${table}"`).execute(db);
+        }
       }, 'TEST_DB_ERROR'),
     close: () => db.destroy(),
   });

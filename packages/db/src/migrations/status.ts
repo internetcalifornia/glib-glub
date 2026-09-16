@@ -26,6 +26,10 @@ import { getDatabase } from '../client';
 export const EXPECTED_MIGRATIONS: ReadonlyArray<string> = [
   '001-identity',
   '002-roles-guardianships',
+  '003-learner-profiles',
+  '004-curriculum',
+  '010-seed-6th-grade-math',
+  '011-seed-japanese-n5',
 ];
 
 export type MigrationStatusErrorTag = 'MIGRATION_STATUS_ERROR';
