@@ -1,0 +1,11 @@
+packages:
+  - 'apps/*'
+  - 'packages/*'
+# Native/postinstall builds pnpm 10 refuses by default. Each entry is a
+# package we actually rely on running its build script: esbuild fetches its
+# platform binary, argon2 ships prebuilt bindings, unrs-resolver is Next's.
+allowBuilds:
+  esbuild: true
+  '@node-rs/argon2': true
+  unrs-resolver: true
+  sharp: true

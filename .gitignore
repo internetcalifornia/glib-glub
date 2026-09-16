@@ -1,0 +1,46 @@
+# dependencies
+node_modules/
+.pnp
+.pnp.*
+
+# testing
+coverage/
+test-results/
+playwright-report/
+
+# next.js
+.next/
+out/
+
+# production
+/build
+dist/
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files hold values; the templates hold none, and they are how the next
+# person learns which variables exist — so the templates stay tracked.
+.env*
+!.env.example
+!.env*.example
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# claude code worktrees
+.claude/worktrees/
+
+# pnpm content-addressable store: local cache, never source.
+.pnpm-store/
+
+# Local upload/blob storage used by the disk blob-store in development.
+.blobs/

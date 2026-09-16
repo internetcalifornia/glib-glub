@@ -1,0 +1,52 @@
+# Production: pulls the images ci.yml publishes. Set DOCKERHUB_NAMESPACE (and
+# optionally IMAGE_TAG) in the environment or a .env beside this file.
+#
+#   docker compose -f docker-compose.yaml run --rm migrate   # apply schema
+#   docker compose -f docker-compose.yaml up -d              # web + gateway
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-glib_glub}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-postgres}']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  migrate:
+    image: ${DOCKERHUB_NAMESPACE:?set DOCKERHUB_NAMESPACE}/glib-glub-migrate:${IMAGE_TAG:-latest}
+    env_file: .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+    # Behind a profile so `up` never migrates as a side effect.
+    profiles: [tools]
+
+  web:
+    image: ${DOCKERHUB_NAMESPACE:?set DOCKERHUB_NAMESPACE}/glib-glub-web:${IMAGE_TAG:-latest}
+    env_file: .env
+    ports:
+      - '${WEB_PORT:-3000}:3000'
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  voice-gateway:
+    image: ${DOCKERHUB_NAMESPACE:?set DOCKERHUB_NAMESPACE}/glib-glub-voice-gateway:${IMAGE_TAG:-latest}
+    env_file: .env
+    ports:
+      - '${VOICE_GATEWAY_PORT:-8787}:8787'
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  postgres-data:

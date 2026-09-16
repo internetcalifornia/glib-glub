@@ -1,0 +1,147 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    services:
+      # The *.integration.test.ts tier self-skips without DATABASE_URL; giving
+      # CI a real Postgres means the store code is exercised on every PR, not
+      # only on a developer's machine.
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: glib_glub_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+        env:
+          # Whole-monorepo type-aware linting (projectService in
+          # eslint.config.js) builds one TS program across every workspace
+          # package. That can outgrow Node's default old-space ceiling and
+          # OOM-kill the runner; raise it well under the runner's memory.
+          NODE_OPTIONS: --max-old-space-size=8192
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Test
+        run: pnpm test
+
+      - name: Migrate the test database
+        run: pnpm db:migrate
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/glib_glub_test
+
+      - name: Integration tests
+        run: pnpm test:integration
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/glib_glub_test
+
+  # Publishes every image docker-compose.yaml pulls, but only once the checks
+  # above have passed on a push to main — never for a pull request. Each
+  # image is tagged twice: `latest` and the version in apps/web/package.json
+  # (every app in the workspace shares it). One matrix entry per target, so
+  # the Dockerfile stages build in parallel.
+  #
+  # Secrets (repository → Settings → Secrets and variables → Actions):
+  #   DOCKERHUB_USERNAME  the Docker Hub account to log in as
+  #   DOCKERHUB_TOKEN     a Docker Hub access token with read/write scope
+  # Optional variable:
+  #   DOCKERHUB_NAMESPACE the namespace images are pushed under; defaults
+  #                       to DOCKERHUB_USERNAME (an org namespace differs).
+  docker:
+    name: docker (${{ matrix.image }})
+    needs: checks
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    # Serialize pushes of the same image so a fast build from an older
+    # commit can never overwrite `latest` after a newer one already has.
+    concurrency:
+      group: docker-publish-${{ matrix.image }}
+      cancel-in-progress: false
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: web
+            image: glib-glub-web
+          - target: voice-gateway
+            image: glib-glub-voice-gateway
+          - target: migrate
+            image: glib-glub-migrate
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Resolve image name and version
+        id: meta
+        env:
+          NAMESPACE: ${{ vars.DOCKERHUB_NAMESPACE || secrets.DOCKERHUB_USERNAME }}
+        run: |
+          if [[ -z "$NAMESPACE" ]]; then
+            echo "::error::Set the DOCKERHUB_USERNAME secret (and DOCKERHUB_TOKEN) to publish images." >&2
+            exit 1
+          fi
+          version="$(node -p "require('./apps/web/package.json').version")"
+          repo="${NAMESPACE}/${{ matrix.image }}"
+          {
+            echo "version=${version}"
+            echo "tags=${repo}:${version},${repo}:latest"
+            echo "commit=$(git rev-parse --short HEAD)"
+          } >> "$GITHUB_OUTPUT"
+          echo "Publishing ${repo}:${version} and ${repo}:latest"
+
+      # The docker-container driver is what lets the Dockerfile's
+      # `# syntax=docker/dockerfile:1-labs` frontend and the GitHub Actions
+      # layer cache below work.
+      - uses: docker/setup-buildx-action@v4
+
+      - uses: docker/login-action@v4
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: docker/Dockerfile
+          target: ${{ matrix.target }}
+          platforms: linux/amd64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          build-args: |
+            GIT_COMMIT=${{ steps.meta.outputs.commit }}
+          labels: |
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.version=${{ steps.meta.outputs.version }}
+          cache-from: type=gha,scope=${{ matrix.target }}
+          cache-to: type=gha,scope=${{ matrix.target }},mode=max

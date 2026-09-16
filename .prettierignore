@@ -1,0 +1,14 @@
+node_modules
+.next
+dist
+build
+coverage
+.git
+.env
+.env.local
+*.lock
+pnpm-lock.yaml
+.DS_Store
+# Gherkin is not JavaScript; Prettier has no parser for it and would only
+# complain about every feature file on every commit.
+*.feature
