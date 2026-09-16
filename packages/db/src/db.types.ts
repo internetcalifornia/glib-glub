@@ -228,6 +228,23 @@ export interface Session {
   userId: string;
 }
 
+export interface SessionToolCalls {
+  args: Generated<Json>;
+  at: Timestamp;
+  id: string;
+  name: string;
+  result: Generated<Json>;
+  session_id: string;
+}
+
+export interface SessionTurns {
+  at: Timestamp;
+  id: string;
+  session_id: string;
+  speaker: Json;
+  text: string;
+}
+
 export interface Subjects {
   category_id: string;
   id: string;
@@ -249,6 +266,22 @@ export interface Tracks {
   title: string;
   updated_at: Generated<Timestamp>;
   visibility: Generated<string>;
+}
+
+export interface TutorSessions {
+  ended_at: Timestamp | null;
+  id: string;
+  learner_id: string;
+  lesson_id: string;
+  lesson_title: string;
+  mode: string;
+  participants: Generated<Json>;
+  problems: Generated<Json>;
+  started_at: Timestamp;
+  status: string;
+  summary: Json | null;
+  track_id: string;
+  transport: string;
 }
 
 export interface Units {
@@ -326,8 +359,11 @@ export interface DB {
   questions: Questions;
   responses: Responses;
   session: Session;
+  session_tool_calls: SessionToolCalls;
+  session_turns: SessionTurns;
   subjects: Subjects;
   tracks: Tracks;
+  tutor_sessions: TutorSessions;
   units: Units;
   upload_extractions: UploadExtractions;
   uploads: Uploads;

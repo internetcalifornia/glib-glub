@@ -62,6 +62,11 @@ export async function runMigrations(
     db: dbResult.val,
     // Resolved up front so the provider never fails inside Kysely.
     provider: { getMigrations: () => Promise.resolve(migrations.val) },
+    // Seeds live at 010+ (Decision #7) while schema migrations keep filling 00x,
+    // so a schema migration can legitimately sort before an already-applied
+    // seed. Kysely still applies pending files in name order; it just stops
+    // refusing to run one that sorts before the last executed name.
+    allowUnorderedMigrations: true,
   });
 
   log('[migrations] running…');

@@ -67,6 +67,7 @@ packages/<name>/
 - Vitest. `*.test.ts` runs everywhere and touches no network or database. `*.integration.test.ts` needs a real Postgres (`DATABASE_URL`) and self-skips without it via `describeLive` from `@glib-glub/testing`. `apps/web/e2e/*.spec.ts` is Playwright, run locally.
 - **Every test file opens with a JSDoc stating the contract it pins.** `describe(<exported symbol>)`, `it(<prose assertion, no "should">)`. Arrange / act / assert separated by blank lines. Plain `expect(...).toEqual/toBe`; no snapshots, no custom matchers.
 - Feature files are executed by `@amiceli/vitest-cucumber`. Every scenario and step in a `.feature` must have a matching step definition or the suite fails — that is the point.
+- Gherkin rules the runner enforces (learned the hard way): `{string}` needs quotes and `{word}` takes a bare token; use `{number}` not `{float}`; a scenario cannot repeat the same expression twice (write one list-valued step or two differently worded steps); no `a(n)` optional text; two apostrophes on one line read as a single-quoted string; a step keyword (`And `, `When `…) inside a quoted value truncates the step; a `Background` runs before `BeforeEachScenario`, so create the world in the Background's first step.
 
 ## Naming
 

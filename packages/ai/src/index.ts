@@ -28,3 +28,25 @@ export type {
 } from './content-safety';
 export { allowAllSafety, functionLlm, keywordSafety, scriptedLlm } from './testing';
 export type { ScriptedLlm } from './testing';
+export {
+  azureVoiceLiveClient,
+  functionCallOutput,
+  openConnection,
+  parseServerEvent,
+  responseCreate,
+  sdpCreate,
+  sessionUpdate,
+  userTextTurn,
+  voiceLiveUrl,
+} from './voice-live';
+export type {
+  AzureVoiceLiveConfig,
+  VoiceLiveClient,
+  VoiceLiveConnection,
+  VoiceLiveErrorTag,
+  VoiceLiveServerEvent,
+  VoiceLiveSessionConfig,
+  VoiceLiveTool,
+} from './voice-live';
+export { startFakeVoiceLiveServer } from './voice-live-fake';
+export type { FakeVoiceLiveServer } from './voice-live-fake';

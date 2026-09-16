@@ -50,6 +50,9 @@ importers:
       '@glib-glub/core':
         specifier: workspace:*
         version: link:../core
+      ws:
+        specifier: ^8.21.3
+        version: 8.21.3
       zod:
         specifier: ^4.6.5
         version: 4.6.5
@@ -57,6 +60,9 @@ importers:
       '@types/node':
         specifier: ^24.13.5
         version: 24.13.5
+      '@types/ws':
+        specifier: ^8.18.1
+        version: 8.18.1
       '@typescript/native':
         specifier: npm:typescript@^7.0.2
         version: typescript@7.0.2
@@ -495,6 +501,58 @@ importers:
       typescript:
         specifier: npm:@typescript/typescript6@^6.0.2
         version: '@typescript/typescript6@6.0.2'
+
+  packages/tutor:
+    dependencies:
+      '@campfhir/safe-functions':
+        specifier: ^0.1.3
+        version: 0.1.3(@typescript/typescript6@6.0.2)(eslint@10.10.0)
+      '@glib-glub/ai':
+        specifier: workspace:*
+        version: link:../ai
+      '@glib-glub/core':
+        specifier: workspace:*
+        version: link:../core
+      '@glib-glub/curriculum':
+        specifier: workspace:*
+        version: link:../curriculum
+      '@glib-glub/db':
+        specifier: workspace:*
+        version: link:../db
+      '@glib-glub/flashcards':
+        specifier: workspace:*
+        version: link:../flashcards
+      '@glib-glub/identity':
+        specifier: workspace:*
+        version: link:../identity
+      '@glib-glub/learner-profile':
+        specifier: workspace:*
+        version: link:../learner-profile
+      kysely:
+        specifier: ^0.29.6
+        version: 0.29.6
+      zod:
+        specifier: ^4.6.5
+        version: 4.6.5
+    devDependencies:
+      '@amiceli/vitest-cucumber':
+        specifier: ^8.0.0
+        version: 8.0.0(vitest@5.0.1(@types/node@24.13.5)(vite@8.3.0(@types/node@24.13.5)(esbuild@0.28.2)(tsx@4.23.13)(yaml@2.9.1)))
+      '@glib-glub/testing':
+        specifier: workspace:*
+        version: link:../testing
+      '@types/node':
+        specifier: ^24.13.5
+        version: 24.13.5
+      '@typescript/native':
+        specifier: npm:typescript@^7.0.2
+        version: typescript@7.0.2
+      typescript:
+        specifier: npm:@typescript/typescript6@^6.0.2
+        version: '@typescript/typescript6@6.0.2'
+      vitest:
+        specifier: ^5.0.1
+        version: 5.0.1(@types/node@24.13.5)(vite@8.3.0(@types/node@24.13.5)(esbuild@0.28.2)(tsx@4.23.13)(yaml@2.9.1))
 
 packages:
 
@@ -1209,6 +1267,9 @@ packages:
 
   '@types/pg@8.23.1':
     resolution: {integrity: sha512-fKVHpikPdg4GKks3JuLEhvwSyvwzF23hnabPy6DD8ljVbC7+6J5dQzdv4arV6jqq57djnMgs1HKBxX4P8aBI3A==}
+
+  '@types/ws@8.18.1':
+    resolution: {integrity: sha512-ThVF6DCVhA8kUGy+aazFQ4kXQ7E1Ty7A3ypFOe0IcJV8O/M511G99AW24irKrW56Wt44yG9+ij8FaqoBGkuBXg==}
 
   '@typescript-eslint/eslint-plugin@8.70.0':
     resolution: {integrity: sha512-/v8HZt6RlyIZxB3ntehELOcUcfxKPVGWXnQdJuHRmzrqgF8nQypcC/oxGW+Ot4VGKDq81XugPKxx0n5PBtf9PA==}
@@ -2431,6 +2492,18 @@ packages:
     resolution: {integrity: sha512-BN22B5eaMMI9UMtjrGd5g5eCYPpCPDUy0FJXbYsaT5zYxjFOckS53SQDE3pWkVoWpHXVb3BrYcEN4Twa55B5cA==}
     engines: {node: '>=0.10.0'}
 
+  ws@8.21.3:
+    resolution: {integrity: sha512-201TZ/kPWxoPr/OKWjquZR1SWKXcvxdH+e1xrx89b3YbmzLMFCLfnaG1HFIgWzJOEWZ7MvpK++odZufgYR50Rw==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: '>=5.0.2'
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
+
   xml-naming@0.3.0:
     resolution: {integrity: sha512-ghig2TBE/H11aOVgmahA3MhimvkBr6JIYknH/Dhdk10nXwdbIqBJsbfMxpvFPG8bAw77gN29aQWvKpmVoPlvPQ==}
     engines: {node: '>=16.0.0'}
@@ -3097,6 +3170,10 @@ snapshots:
       '@types/node': 24.13.5
       pg-protocol: 1.16.0
       pg-types: 2.2.0
+
+  '@types/ws@8.18.1':
+    dependencies:
+      '@types/node': 24.13.5
 
   '@typescript-eslint/eslint-plugin@8.70.0(@typescript-eslint/parser@8.70.0(@typescript/typescript6@6.0.2)(eslint@10.10.0))(@typescript/typescript6@6.0.2)(eslint@10.10.0)':
     dependencies:
@@ -4153,6 +4230,8 @@ snapshots:
       stackback: 0.0.2
 
   word-wrap@1.2.5: {}
+
+  ws@8.21.3: {}
 
   xml-naming@0.3.0: {}
 
