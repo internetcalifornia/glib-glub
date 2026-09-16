@@ -1,0 +1,8 @@
+export type AssessmentErrorTag =
+  | 'FORBIDDEN'
+  | 'NOT_FOUND'
+  | 'VALIDATION_ERROR'
+  | 'NOT_OBJECTIVE'
+  | 'GRADER_UNAVAILABLE'
+  | 'GENERATION_FAILED'
+  | 'DB_ERROR';

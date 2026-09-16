@@ -1,0 +1,10 @@
+export type TutorErrorTag =
+  | 'FORBIDDEN'
+  | 'NOT_FOUND'
+  | 'VALIDATION_ERROR'
+  | 'NO_OPEN_PROBLEM'
+  | 'SESSION_NOT_LIVE'
+  | 'NOTHING_DUE'
+  | 'UNKNOWN_TOOL'
+  | 'SUMMARY_FAILED'
+  | 'DB_ERROR';
