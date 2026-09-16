@@ -18,12 +18,16 @@ Requirements: Node 24, pnpm 10, Docker (for Postgres and Azurite) — or a local
 
 ```bash
 pnpm install
-cp .env.example .env            # fill in DATABASE_URL at minimum
+cp .env.example .env            # DATABASE_URL, APP_ORIGIN, AUTH_SECRET at minimum
 docker compose up -d postgres azurite
-pnpm db:migrate
+pnpm db:migrate                 # schema + the seeded Grade 6 Mathematics and Japanese tracks
 pnpm dev                        # apps/web on http://localhost:3000
-pnpm --filter voice-gateway dev # ws://localhost:8787, VOICE_LIVE_FAKE=1 for the fake server
+VOICE_LIVE_FAKE=1 pnpm --filter voice-gateway dev   # ws://localhost:8787 against the fake Voice Live server
 ```
+
+Then sign up, pick an age band in Settings, enrol in a track, and press **Start talking**. With `AZURE_FOUNDRY_ENDPOINT` and a key (or a managed identity) set, the gateway talks to the real Voice Live API instead of the fake.
+
+Toolchain: Node 24, pnpm 10, **TypeScript 7** (`tsc` is the native compiler, aliased as `@typescript/native`) for type checking, with TypeScript 6's classic API installed as `typescript` for typescript-eslint and Next's build.
 
 ## Scripts
 
@@ -34,7 +38,8 @@ pnpm --filter voice-gateway dev # ws://localhost:8787, VOICE_LIVE_FAKE=1 for the
 | `pnpm test`             | Vitest unit tests and feature files in every package.                    |
 | `pnpm test:integration` | The `*.integration.test.ts` tier; needs `DATABASE_URL`, skips otherwise. |
 | `pnpm db:migrate`       | Applies pending migrations from `packages/db/src/migrations`.            |
-| `pnpm build`            | Builds `apps/web` and the migrate bundle.                                |
+| `pnpm build`            | Builds `apps/web` (Next) and the migrate bundle.                         |
+| `pnpm db:migrate`       | Also applies the seeds; `/api/health` is green once nothing is pending.  |
 
 ## Layout
 

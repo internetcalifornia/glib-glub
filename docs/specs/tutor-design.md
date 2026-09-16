@@ -109,3 +109,14 @@ column, large targets, the transcript scrolls, the controls stay fixed.
 - Transcripts and tool calls only; never audio (Decision #5).
 - The Azure credential never leaves the gateway.
 - Lesson content is notes for the tutor, never read aloud.
+
+## Outcome (appended 2026-09-16)
+
+Shipped as designed with two differences. The browser authenticates to the
+gateway with a signed ticket rather than the session cookie (Decision #10),
+because the cookie does not reach the gateway's host. Text sessions open the
+same Voice Live connection with `modalities: ['text']` over the pure-WebSocket
+path instead of going through the chat adapter, so both transports share one
+session record and one tool loop. The gateway's behaviour is specified in
+`apps/voice-gateway/features/gateway-session.feature` and run against the fake
+server; see `docs/voice.md` for the as-built picture.

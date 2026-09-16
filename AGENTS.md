@@ -67,7 +67,14 @@ packages/<name>/
 - Vitest. `*.test.ts` runs everywhere and touches no network or database. `*.integration.test.ts` needs a real Postgres (`DATABASE_URL`) and self-skips without it via `describeLive` from `@glib-glub/testing`. `apps/web/e2e/*.spec.ts` is Playwright, run locally.
 - **Every test file opens with a JSDoc stating the contract it pins.** `describe(<exported symbol>)`, `it(<prose assertion, no "should">)`. Arrange / act / assert separated by blank lines. Plain `expect(...).toEqual/toBe`; no snapshots, no custom matchers.
 - Feature files are executed by `@amiceli/vitest-cucumber`. Every scenario and step in a `.feature` must have a matching step definition or the suite fails — that is the point.
+- The integration tier shares one database across packages, so `pnpm test:integration` runs one package at a time (Decision #11). Never run two packages' integration suites concurrently against the same `DATABASE_URL`.
 - Gherkin rules the runner enforces (learned the hard way): `{string}` needs quotes and `{word}` takes a bare token; use `{number}` not `{float}`; a scenario cannot repeat the same expression twice (write one list-valued step or two differently worded steps); no `a(n)` optional text; two apostrophes on one line read as a single-quoted string; a step keyword (`And `, `When `…) inside a quoted value truncates the step; a `Background` runs before `BeforeEachScenario`, so create the world in the Background's first step.
+
+## Next.js specifics
+
+- Never wrap `headers()`, `cookies()`, `params` or `searchParams` in `wrapAsync`: Next throws from them to mark a route dynamic during prerender, and swallowing that turns the page static (Decision #12). Read them first and chain with `.then` without `await` (see `apps/web/lib/session.ts`).
+- Every `page.tsx`, `route.ts` and `actions.ts` under `apps/web/app` references the session guard or is listed with a reason in `test/route-auth-coverage.test.ts`. Verify the session inside each server action, never only in the page.
+- The gateway ticket (Decision #10) is the only credential the browser hands the voice gateway; the Azure credential never leaves `apps/voice-gateway`.
 
 ## Naming
 

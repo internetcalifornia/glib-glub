@@ -77,7 +77,15 @@ Numbered and dated. Cite them from code as `// Decision #n`. Amend by appending 
 
 **7. Seeds ship as migrations.** _(2026-09-16)_ The 6th-grade mathematics and Japanese tracks are migrations `010` and `011`, so every environment — test, dev, prod — has the same catalogue after `migrate`, and the seeds are versioned with the schema they depend on.
 
-**8. MCP over HTTP, API-key authenticated, in `apps/web`.** _(2026-09-16)_ Tool registration is pure and lives in `packages/mcp-tools`; the transport is `mcp-handler` at `/api/mcp/[transport]`. Keys are hashed at rest and scoped to an educator. OAuth for MCP clients is Phase 2.
+**8. MCP over HTTP, API-key authenticated, in `apps/web`.** _(2026-09-16)_ Tool registration is pure and lives in `packages/mcp-tools`; the transport is `mcp-handler` at `/api/mcp/[transport]`. Keys are hashed at rest and scoped to an educator. OAuth for MCP clients is Phase 2. _Note (2026-09-16):_ shipped with the SDK's own `createMcpHandler` at `/api/mcp` rather than `mcp-handler`; the SDK's handler is a fetch-shaped function with no extra dependency, and the route needs no transport segment.
+
+**9. Educators declare themselves, for now.** _(2026-09-16)_ There is no verification step in front of the educator role: anyone can register as an educator from Settings. Publishing still requires the role and every track carries its author, so a review or invitation step can be put in front of `becomeEducatorAction` without touching the catalogue. Revisit before opening the platform to the public.
+
+**10. The browser proves itself to the gateway with a signed ticket.** _(2026-09-16)_ The session cookie belongs to the web app's origin and does not reach the voice gateway's host. The web app mints a two-minute HMAC ticket over the user id with `AUTH_SECRET`; the gateway, which shares the secret, verifies it and reads roles from the database. The ticket carries no roles and is minted at connect time.
+
+**11. One test database, one package at a time.** _(2026-09-16)_ Every package's integration tier clears the tables it touches, and they all share `DATABASE_URL`; run concurrently, one suite's cleanup wipes another's rows mid-test. `pnpm test:integration` therefore runs with `--workspace-concurrency=1`. A database per package would allow parallelism at the cost of a more elaborate CI service setup; not worth it at this size.
+
+**12. Never wrap Next's request APIs in `wrapAsync`.** _(2026-09-16)_ During a prerender Next signals "this route is dynamic" by throwing from `headers()`/`cookies()`. Catching that inside `wrapAsync` turned every guarded page into a static redirect. `lib/session.ts` calls `headers()` first and chains without `await`, which keeps the harness rule satisfied and the signal intact; the rule is recorded in `AGENTS.md`.
 
 ## Open questions
 
