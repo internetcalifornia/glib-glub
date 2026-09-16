@@ -24,6 +24,8 @@ export type {
 export { grantRole, hasRole, onUserCreated } from './roles';
 export type { RoleDeps } from './roles';
 export { getSessionUser } from './session';
+export { GATEWAY_TICKET_TTL_SECONDS, issueGatewayTicket, verifyGatewayTicket } from './ticket';
+export type { TicketErrorTag } from './ticket';
 export type { SessionDeps } from './session';
 export { IDENTITY_TABLES, kyselyIdentityStore } from './store';
 export {

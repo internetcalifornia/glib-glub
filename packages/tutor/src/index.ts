@@ -57,4 +57,6 @@ export type {
   TutorSession,
 } from './types';
 export { rateFor, voiceProfile } from './voice';
+export { tutorDepsFromStores } from './wiring';
+export type { WiringOptions } from './wiring';
 export type { VoiceProfile } from './voice';

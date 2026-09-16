@@ -51,6 +51,11 @@ describeFeature(feature, ({ Scenario, BeforeEachScenario }) => {
   };
   /** Web and gateway schemas need a database URL the scenarios do not mention. */
   const withDatabase = (): EnvSource => ({ DATABASE_URL: 'postgres://x', ...source });
+  /** The gateway also needs the ticket secret it shares with the web app. */
+  const withGatewaySecret = (): EnvSource => ({
+    AUTH_SECRET: '0123456789abcdef0123456789abcdef',
+    ...withDatabase(),
+  });
 
   Scenario('A complete environment loads', ({ Given, When, Then, And }) => {
     Given('the environment sets {word} to {string}', set);
@@ -106,7 +111,7 @@ describeFeature(feature, ({ Scenario, BeforeEachScenario }) => {
       let gateway: Result<VoiceGatewayEnv, ConfigErrorTag>;
       Given('the environment sets {word} to {string}', set);
       When('the voice gateway configuration is loaded', () => {
-        gateway = loadEnv(voiceGatewayEnvSchema, withDatabase());
+        gateway = loadEnv(voiceGatewayEnvSchema, withGatewaySecret());
         outcome = gateway;
       });
       Then('loading succeeds', expectSuccess);

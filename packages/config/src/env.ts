@@ -74,6 +74,8 @@ export const webEnvSchema = databaseEnvSchema
 export const voiceGatewayEnvSchema = databaseEnvSchema
   .extend({
     VOICE_GATEWAY_PORT: port.default(8787),
+    /** Shared with the web app: it signs gateway tickets, the gateway verifies them. */
+    AUTH_SECRET: z.string().min(32),
     APP_ORIGIN: z.url().default('http://localhost:3000'),
     CONSOLE_LOG_LEVEL: z.string().default('info'),
     LOG_DB_LEVEL: z.string().default('info'),

@@ -10,6 +10,8 @@ export type Generated<T> =
     ? ColumnType<S, I | undefined, U>
     : ColumnType<T, T | undefined, T>;
 
+export type Int8 = ColumnType<string, bigint | number | string, bigint | number | string>;
+
 export type Json = JsonValue;
 
 export type JsonArray = JsonValue[];
@@ -170,6 +172,73 @@ export interface LevelEstimates {
   level: string;
   score: Numeric;
   subject_id: string;
+}
+
+export interface LogAttr {
+  attr_id: Generated<Int8>;
+  encrypted: Generated<boolean>;
+  log_id: Generated<Int8>;
+  logged_timestamp: Timestamp;
+  val: string | null;
+  val_name: string;
+  val_type: string;
+}
+
+export interface LogAttrBlob {
+  attr_id: Generated<Int8>;
+  encrypted: Generated<boolean>;
+  log_id: Generated<Int8>;
+  logged_timestamp: Timestamp;
+  val: Buffer;
+  val_name: string;
+}
+
+export interface LogE2eClients {
+  algo: string;
+  client_id: string;
+  registered_at: Generated<Timestamp>;
+  signing_key_jwk: string;
+}
+
+export interface LogPurgeIds {
+  log_id: Int8;
+  purge_id: string;
+}
+
+export interface LogPurgeJob {
+  attr_count: Int8;
+  batch_size: number;
+  created_at: Generated<Timestamp>;
+  deleted_attrs: Generated<Int8>;
+  deleted_logs: Generated<Int8>;
+  error: string | null;
+  finished_at: Timestamp | null;
+  ids_captured: Generated<boolean>;
+  lock_expires_at: Timestamp | null;
+  locked_by: string | null;
+  log_count: Int8;
+  purge_id: string;
+  requires_confirmation: boolean;
+  started_at: Timestamp | null;
+  status: string;
+  until_ts: Timestamp;
+}
+
+export interface Logs {
+  level: string;
+  log_id: Generated<Int8>;
+  logged_timestamp: Timestamp;
+  message: string;
+}
+
+export interface McpApiKeys {
+  created_at: Generated<Timestamp>;
+  id: string;
+  key_hash: string;
+  last_used_at: Timestamp | null;
+  name: string;
+  revoked_at: Timestamp | null;
+  user_id: string;
 }
 
 export interface PacingPlans {
@@ -353,6 +422,13 @@ export interface DB {
   lesson_progress: LessonProgress;
   lessons: Lessons;
   level_estimates: LevelEstimates;
+  log_attr: LogAttr;
+  log_attr_blob: LogAttrBlob;
+  log_e2e_clients: LogE2eClients;
+  log_purge_ids: LogPurgeIds;
+  log_purge_job: LogPurgeJob;
+  logs: Logs;
+  mcp_api_keys: McpApiKeys;
   pacing_plans: PacingPlans;
   passkey: Passkey;
   personalisation_snapshots: PersonalisationSnapshots;

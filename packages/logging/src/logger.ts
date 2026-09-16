@@ -63,9 +63,9 @@ export function createAppLogger(options: AppLoggerOptions): AppLogger {
  * each process; a failure is reported so a process that can only log to
  * stdout still starts.
  */
-export function attachPostgresAdapter(
+export function attachPostgresAdapter<Schema>(
   logger: AppLogger,
-  db: Kysely<unknown>,
+  db: Kysely<Schema>,
   level = 'info'
 ): Result<void, LoggingErrorTag> {
   const attached = wrap(() => {

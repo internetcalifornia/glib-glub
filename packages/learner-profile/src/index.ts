@@ -26,7 +26,7 @@ export type {
   TextExtractor,
   UploadDeps,
 } from './ports';
-export { buildSnapshotContent, digestOf, rebuildSnapshot } from './snapshot';
+export { buildSnapshotContent, digestOf, rebuildSnapshot, renderSnapshot } from './snapshot';
 export type { SnapshotDeps, SnapshotInputs } from './snapshot';
 export { kyselyProfileStore, PROFILE_TABLES } from './store';
 export { keywordSummariser, llmSummariser, SUMMARISER_SYSTEM_PROMPT } from './summariser';

@@ -31,6 +31,8 @@ export const EXPECTED_MIGRATIONS: ReadonlyArray<string> = [
   '005-assessment',
   '006-flashcards',
   '007-tutor-sessions',
+  '008-mcp-api-keys',
+  '009-logs',
   '010-seed-6th-grade-math',
   '011-seed-japanese-n5',
 ];

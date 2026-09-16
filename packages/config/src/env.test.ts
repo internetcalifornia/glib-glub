@@ -41,6 +41,7 @@ describe('loadEnv', () => {
   it('coerces the gateway port from the string the environment carries', () => {
     const result = loadEnv(voiceGatewayEnvSchema, {
       DATABASE_URL: 'postgres://x',
+      AUTH_SECRET: '0123456789abcdef0123456789abcdef',
       VOICE_GATEWAY_PORT: '9000',
     });
 

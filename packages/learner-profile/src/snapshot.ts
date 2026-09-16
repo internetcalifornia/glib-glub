@@ -106,3 +106,31 @@ export async function rebuildSnapshot(
   if (!saved.ok) return saved;
   return ok(snapshot);
 }
+
+/**
+ * The snapshot as prose for the tutor's instructions. Summaries and tags
+ * only — the content already contains no raw upload text, and this keeps
+ * it that way by construction.
+ */
+export function renderSnapshot(content: SnapshotContent): string {
+  const lines: string[] = [];
+  if (content.about) lines.push(`About: ${content.about}`);
+  if (content.gradeLabel) lines.push(`Grade: ${content.gradeLabel}`);
+  if (content.interests.length > 0) lines.push(`Interests: ${content.interests.join(', ')}`);
+  if (content.learningStyles.length > 0)
+    lines.push(`Learns best: ${content.learningStyles.join(', ')}`);
+  if (content.preferredLanguage && content.preferredLanguage !== 'en')
+    lines.push(`Preferred language: ${content.preferredLanguage}`);
+  if (content.objectives.length > 0)
+    lines.push(`Objectives: ${content.objectives.map((o) => o.title).join('; ')}`);
+  for (const upload of content.uploads) {
+    const tags = upload.tags.length > 0 ? ` [${upload.tags.join(', ')}]` : '';
+    lines.push(`Prior work (${upload.fileName}): ${upload.summary}${tags}`);
+  }
+  for (const estimate of content.levelEstimates) {
+    lines.push(
+      `Baseline in ${estimate.subject}: ${estimate.level} (confidence ${Math.round(estimate.confidence * 100)}%)`
+    );
+  }
+  return lines.join('\n');
+}
